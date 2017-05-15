@@ -7,8 +7,7 @@
         android:title="@string/search"
         app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/add"
-        android:title="@string/add_new_note"
-        android:icon="@drawable/ic_action_add"
-        app:showAsAction="ifRoom" />
+    <item android:id="@+id/edit"
+        android:title="@string/edit"
+        app:showAsAction="ifRoom"/>
 </menu>

@@ -5,17 +5,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-
+    Button btnAdd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         // Add Toolbar
         toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -40,11 +41,16 @@ public class MainActivity extends AppCompatActivity {
             case R.id.search:
                 Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
                 return true;
-            case R.id.add:
-                Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show();
+            case R.id.edit:
+                Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void btnAddNote(View view) {
+//        Log.v("TAG", "ADD NEW NOTE")
+        Toast.makeText(this, "New Note", Toast.LENGTH_SHORT).show();
     }
 }
