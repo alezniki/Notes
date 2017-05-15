@@ -2,16 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!--Add Action Buttons-->
-
-    <!-- "New Note", should appear as action button if possible -->
     <item
-        android:id="@+id/new_note"
-        android:title="@string/new_note"
-        android:icon="@drawable/ic_add"
+        android:id="@+id/search"
+        android:title="@string/search"
         app:showAsAction="ifRoom"/>
 
-    <!-- "Settings", should always be in the overflow -->
-    <item android:id="@+id/settings"
-        android:title="@string/settings"
-        app:showAsAction="never"/>
+    <item android:id="@+id/add"
+        android:title="@string/add_new_note"
+        android:icon="@drawable/ic_action_add"
+        app:showAsAction="ifRoom" />
 </menu>
