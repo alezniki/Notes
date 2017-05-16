@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnAddNote(View view) {
-        Toast.makeText(this, "New Note", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
         startActivity(intent);
     }

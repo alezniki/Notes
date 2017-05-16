@@ -3,12 +3,12 @@ package com.nikola.notes.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.nikola.notes.R;
 
@@ -39,6 +39,7 @@ public class SecondActivity extends AppCompatActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here.
@@ -52,14 +53,13 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     public void saveNote(){
-        // Toast.makeText(this, "Save", Toast.LENGTH_SHORT).show();
         String note = String.valueOf(enterNote.getText());
 
         Intent intent = new Intent(SecondActivity.this, MainActivity.class);
         intent.putExtra("note", note); // String name, Bundle value
 
-        if (note.isEmpty()) {
-            Toast.makeText(this, "Enter note dummy", Toast.LENGTH_SHORT).show();
+        if (note.trim().isEmpty()) {
+            Snackbar.make(findViewById(R.id.save),"Enter note dummy", Snackbar.LENGTH_SHORT).show();
         } else {
             startActivity(intent);
         }
