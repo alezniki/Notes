@@ -1,5 +1,6 @@
 package com.nikola.notes.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -43,10 +44,24 @@ public class SecondActivity extends AppCompatActivity {
         // Handle action bar item clicks here.
         switch (item.getItemId()) {
             case R.id.save:
-                Toast.makeText(this, "Save", Toast.LENGTH_SHORT).show();
+                saveNote();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void saveNote(){
+        // Toast.makeText(this, "Save", Toast.LENGTH_SHORT).show();
+        String note = String.valueOf(enterNote.getText());
+
+        Intent intent = new Intent(SecondActivity.this, MainActivity.class);
+        intent.putExtra("note", note); // String name, Bundle value
+
+        if (note.isEmpty()) {
+            Toast.makeText(this, "Enter note dummy", Toast.LENGTH_SHORT).show();
+        } else {
+            startActivity(intent);
         }
     }
 }

@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nikola.notes.R;
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     ImageButton btnAdd;
+    TextView tvNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +28,18 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Add Button
+        tvNote = (TextView)findViewById(R.id.tv_note);
         btnAdd = (ImageButton)findViewById(R.id.btn_add_note);
+
+        Bundle saved = getIntent().getExtras(); // From SecondActivity
+
+        if (saved != null) {
+            String note = saved.getString("note");
+            //The key argument here must match that used in the other activity
+            tvNote.setText(note);
+        } else {
+            tvNote.getText();
+        }
 
     }
 
@@ -57,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void btnAddNote(View view) {
-//        Log.v("TAG", "ADD NEW NOTE")
         Toast.makeText(this, "New Note", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
         startActivity(intent);
