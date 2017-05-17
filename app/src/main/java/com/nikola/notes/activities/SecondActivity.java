@@ -1,9 +1,9 @@
 package com.nikola.notes.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,12 +56,19 @@ public class SecondActivity extends MainActivity {
         String note = String.valueOf(enterNote.getText());
 
         if (note.trim().isEmpty()) {
-            Snackbar.make(findViewById(R.id.save),"Enter note dummy", Snackbar.LENGTH_SHORT).show();
+            //Snackbar.make(findViewById(R.id.save),"Enter note dummy", Snackbar.LENGTH_SHORT).show();
+            Intent returnIntent = new Intent();
+            setResult(Activity.RESULT_CANCELED, returnIntent);
+            finish();
         } else {
-            Intent intent = new Intent(SecondActivity.this, MainActivity.class);
-            intent.putExtra("note", note); // String name, Bundle value
+            //Intent intent = new Intent(SecondActivity.this, MainActivity.class);
+            //intent.putExtra("note", note); // String name, Bundle value
+            //startActivity(intent);
 
-            startActivity(intent);
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("note",note);
+            setResult(Activity.RESULT_OK, returnIntent);
+            finish();
         }
 
     }

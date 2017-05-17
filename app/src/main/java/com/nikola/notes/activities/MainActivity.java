@@ -1,5 +1,6 @@
 package com.nikola.notes.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 import com.nikola.notes.R;
 
 public class MainActivity extends AppCompatActivity {
+
+    public final int REQUEST_CODE  = 1;
 
     Toolbar toolbar;
     ImageButton btnAdd;
@@ -31,18 +34,31 @@ public class MainActivity extends AppCompatActivity {
         tvNote = (TextView)findViewById(R.id.tv_note);
         btnAdd = (ImageButton)findViewById(R.id.btn_add_note);
 
-        Bundle saved = getIntent().getExtras(); // From SecondActivity
-
-        if (saved != null) {
-            String note = saved.getString("note");
-            //The key argument here must match that used in the other activity
-            tvNote.setText(note);
-        } else {
-            tvNote.getText();
-        }
+//        Bundle saved = getIntent().getExtras(); // From SecondActivity
+//
+//        if (saved != null) {
+//            String note = saved.getString("note");
+//            //The key argument here must match that used in the other activity
+//            tvNote.setText(note);
+//        } else {
+//            tvNote.getText();
+//        }
 
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                String note = data.getStringExtra("note");
+                tvNote.setText(note);
+            } if (requestCode == Activity.RESULT_CANCELED) {
+                tvNote.getText();
+            }
+        }
+    }
 
     // Inflate Menu icons
     @Override
@@ -70,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnAddNote(View view) {
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-        startActivity(intent);
+        //startActivity(intent);
+        startActivityForResult(intent,REQUEST_CODE);
     }
 }
