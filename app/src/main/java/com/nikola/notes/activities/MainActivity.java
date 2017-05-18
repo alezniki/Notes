@@ -4,14 +4,15 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     public final int REQUEST_CODE  = 1;
 
     Toolbar toolbar;
-    ImageButton btnAdd;
+    FloatingActionButton btnAdd;
     TextView tvNote;
 
     @Override
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         tvNote = (TextView)findViewById(R.id.tv_note);
-        btnAdd = (ImageButton)findViewById(R.id.btn_add_note);
+        btnAdd = (FloatingActionButton) findViewById(R.id.btn_add_note);
 
 //        Bundle saved = getIntent().getExtras(); // From SecondActivity
 //
@@ -89,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         SearchManager searchManager =(SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setBackgroundColor(Color.WHITE);
 
         return true;
     }

@@ -23,7 +23,7 @@
         </activity>
 
         <!-- Declate SecondActivity -->
-        <!--windowSoftInputMode="adjustResize" to show Snackbar over the keyboard-->
+        <!--windowSoftInputMode="adjustResize" to adjust the keyboard-->
         <activity
             android:windowSoftInputMode="adjustResize"
             android:name=".activities.SecondActivity"
