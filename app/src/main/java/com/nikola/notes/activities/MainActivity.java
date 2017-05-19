@@ -106,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
+        // Do not iconify the icon, expand it by default
+        searchView.setIconifiedByDefault(false);
+
         searchView.setBackgroundColor(Color.WHITE);
 //        setStatusBarColor(this, Color.parseColor("#4CAF50"));
 
