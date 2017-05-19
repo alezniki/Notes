@@ -5,7 +5,7 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    app:titleTextColor="@color/colorSecondaryText"
-    android:background="@color/colorMain"
+    app:titleTextColor="@color/colorPrimaryLight"
+    android:background="@color/colorPrimary"
     android:elevation="4dp">
 </android.support.v7.widget.Toolbar>

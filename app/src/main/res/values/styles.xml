@@ -5,7 +5,9 @@
     <!--<style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">-->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="actionMenuTextColor">#FFFFFF</item>
+        <item name="actionMenuTextColor">@color/colorPrimaryLight</item>
+        <!--Set Status Bar Color-->
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

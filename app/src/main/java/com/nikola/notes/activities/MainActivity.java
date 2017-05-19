@@ -92,6 +92,13 @@ public class MainActivity extends AppCompatActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         searchView.setBackgroundColor(Color.WHITE);
+//        setStatusBarColor(this, Color.parseColor("#4CAF50"));
+
+        // SET STATUS BAR COLOLR snippet code
+//        Window window = this.getWindow();
+//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorAccent));
 
         return true;
     }

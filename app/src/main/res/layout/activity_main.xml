@@ -35,5 +35,5 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="10dp"
-        android:backgroundTint="@color/colorMain"/>
+        android:backgroundTint="@color/colorPrimary"/>
 </android.support.design.widget.CoordinatorLayout>
