@@ -18,7 +18,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nikola.notes.NoteAdapter;
+import com.nikola.notes.adapters.NoteAdapter;
 import com.nikola.notes.R;
 
 public class MainActivity extends AppCompatActivity {
