@@ -1,6 +1,5 @@
 package com.nikola.notes.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,7 @@ import java.util.List;
  */
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
-    private Context context;
+//    private Context context;
     private List<Note> list;
 
 //    private ItemClick
@@ -37,12 +36,11 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public NoteAdapter(Context context, List<Note> list) {
-        this.context = context;
+    public NoteAdapter(List<Note> list) {
         this.list = list;
     }
 
-    public NoteAdapter() {}
+//    public NoteAdapter() {}
 
      // Create new views (invoked by the layout manager)
     @Override
@@ -73,5 +71,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     public int getItemCount() {
         return list.size();
         //return mDataset.length;
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
     }
 }

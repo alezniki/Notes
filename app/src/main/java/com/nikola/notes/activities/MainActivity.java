@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         //3. Specify an adapter
 //        adapter = new NoteAdapter(myDataSet);
         list = new ArrayList<>();
-        adapter = new NoteAdapter(this, list);
+        adapter = new NoteAdapter(list);
         recyclerView.setAdapter(adapter);
 
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
@@ -100,8 +100,10 @@ public class MainActivity extends AppCompatActivity {
                 String title = data.getStringExtra("note_title");
                 String text = data.getStringExtra("note_text");
 
-                tvNoteTitle.setText(title);
-                tvNoteText.setText(text);
+                Note note = new Note(title,text);
+                list.add(note);
+                adapter.notifyDataSetChanged();
+
 
             } if (requestCode == Activity.RESULT_CANCELED) {
                 tvNoteTitle.getText();
