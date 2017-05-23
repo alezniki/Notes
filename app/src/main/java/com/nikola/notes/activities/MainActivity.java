@@ -18,8 +18,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nikola.notes.adapters.NoteAdapter;
 import com.nikola.notes.R;
+import com.nikola.notes.adapters.NoteAdapter;
+import com.nikola.notes.model.Note;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,13 +31,16 @@ public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     FloatingActionButton btnAdd;
-    TextView tvNote;
+    TextView tvNoteTitle;
+    TextView tvNoteText;
+
 
     //RecycleView
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
+    //private RecyclerView.Adapter adapter;
+    private NoteAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-
+    private List<Note> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        tvNote = (TextView)findViewById(R.id.tv_note);
+        tvNoteTitle = (TextView)findViewById(R.id.tv_note_title);
+        tvNoteText = (TextView)findViewById(R.id.tv_note_text);
         btnAdd = (FloatingActionButton) findViewById(R.id.btn_add_note);
 
         recyclerView = (RecyclerView)findViewById(R.id.recycler);
@@ -58,9 +66,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
 
-        //3. TODO Specify an adapter
+        //3. Specify an adapter
 //        adapter = new NoteAdapter(myDataSet);
-        adapter = new NoteAdapter();
+        list = new ArrayList<>();
+        adapter = new NoteAdapter(this, list);
         recyclerView.setAdapter(adapter);
 
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
@@ -87,10 +96,16 @@ public class MainActivity extends AppCompatActivity {
         //super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                String note = data.getStringExtra("note");
-                tvNote.setText(note);
+
+                String title = data.getStringExtra("note_title");
+                String text = data.getStringExtra("note_text");
+
+                tvNoteTitle.setText(title);
+                tvNoteText.setText(text);
+
             } if (requestCode == Activity.RESULT_CANCELED) {
-                tvNote.getText();
+                tvNoteTitle.getText();
+                tvNoteText.getText();
             }
         }
     }
