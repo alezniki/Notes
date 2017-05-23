@@ -12,7 +12,6 @@
 
         <include layout="@layout/toolbar"/>
 
-        <!-- A RecyclerView with some commonly used attributes -->
         <ListView
             android:id="@+id/list_view"
             android:scrollbars="vertical"
