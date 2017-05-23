@@ -8,22 +8,20 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nikola.notes.R;
-import com.nikola.notes.adapters.NoteAdapter;
+import com.nikola.notes.adapter.NoteAdapter;
 import com.nikola.notes.model.Note;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,13 +32,10 @@ public class MainActivity extends AppCompatActivity {
     TextView tvNoteTitle;
     TextView tvNoteText;
 
+    NoteAdapter adapter;
+    ListView listView;
+    ArrayList<Note> list;
 
-    //RecycleView
-    private RecyclerView recyclerView;
-    //private RecyclerView.Adapter adapter;
-    private NoteAdapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
-    private List<Note> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,22 +50,13 @@ public class MainActivity extends AppCompatActivity {
         tvNoteText = (TextView)findViewById(R.id.tv_note_text);
         btnAdd = (FloatingActionButton) findViewById(R.id.btn_add_note);
 
-        recyclerView = (RecyclerView)findViewById(R.id.recycler);
-
-        // 1. Use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
-
-        // 2. Use a linear layout manager
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
-
-        //3. Specify an adapter
-//        adapter = new NoteAdapter(myDataSet);
-        list = new ArrayList<>();
-        adapter = new NoteAdapter(list);
-        recyclerView.setAdapter(adapter);
+        // Construct the data source
+        list = new ArrayList<Note>();
+        // Create the adapter to convert the array to views
+        adapter = new NoteAdapter(this,list);
+        // Attach the adapter to a ListView
+        listView = (ListView)findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
 
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
         handleIntent(getIntent());
@@ -99,11 +85,11 @@ public class MainActivity extends AppCompatActivity {
 
                 String title = data.getStringExtra("note_title");
                 String text = data.getStringExtra("note_text");
-
+//
+//                tvNoteTitle.setText(title);
+//                tvNoteText.setText(text);
                 Note note = new Note(title,text);
-                list.add(note);
-                adapter.notifyDataSetChanged();
-
+                adapter.add(note);
 
             } if (requestCode == Activity.RESULT_CANCELED) {
                 tvNoteTitle.getText();
@@ -125,16 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Do not iconify the icon, expand it by default
         searchView.setIconifiedByDefault(false);
-
         searchView.setBackgroundColor(Color.WHITE);
-//        setStatusBarColor(this, Color.parseColor("#4CAF50"));
-
-        // SET STATUS BAR COLOLR snippet code
-//        Window window = this.getWindow();
-//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorAccent));
-
         return true;
     }
 
@@ -156,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnAddNote(View view) {
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-        //startActivity(intent);
         startActivityForResult(intent,REQUEST_CODE);
     }
 }
