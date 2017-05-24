@@ -40,7 +40,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         this.list = list;
     }
 
-//    public NoteAdapter() {}
+    public NoteAdapter() {}
 
      // Create new views (invoked by the layout manager)
     @Override
