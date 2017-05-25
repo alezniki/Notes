@@ -19,7 +19,7 @@ public class SecondActivity extends MainActivity {
 
     Toolbar toolbar;
     EditText etNoteTitle;
-    EditText etNoteText;
+    EditText etNoteContent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class SecondActivity extends MainActivity {
         setSupportActionBar(toolbar);
 
         etNoteTitle = (EditText)findViewById(R.id.et_note_title);
-        etNoteText = (EditText)findViewById(R.id.et_note_text);
+        etNoteContent = (EditText)findViewById(R.id.et_note_content);
     }
 
     // Inflate second menu
@@ -56,10 +56,10 @@ public class SecondActivity extends MainActivity {
 
     public void saveNote(){
         String title = String.valueOf(etNoteTitle.getText());
-        String text = String.valueOf(etNoteText.getText());
+        String content = String.valueOf(etNoteContent.getText());
 
 
-        if (title.trim().isEmpty() && text.trim().isEmpty()) {
+        if (title.trim().isEmpty() && content.trim().isEmpty()) {
             //Snackbar.make(findViewById(R.id.save),"Enter note dummy", Snackbar.LENGTH_SHORT).show();
             Intent returnIntent = new Intent();
             setResult(Activity.RESULT_CANCELED, returnIntent);
@@ -71,7 +71,7 @@ public class SecondActivity extends MainActivity {
 
             Intent returnIntent = new Intent();
             returnIntent.putExtra("note_title",title);
-            returnIntent.putExtra("note_text",text);
+            returnIntent.putExtra("note_content",content);
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
 

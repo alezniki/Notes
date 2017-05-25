@@ -8,6 +8,10 @@
         <item name="actionMenuTextColor">@color/colorPrimaryLight</item>
         <!--Set Status Bar Color-->
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <!--Toolbar Options menu dots-->
+        <item name="android:textColorSecondary">@color/colorPrimaryLight</item>
+        <!--Toolbar menu item background-->
+        <item name="android:itemBackground">@android:color/transparent</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     FloatingActionButton btnAdd;
     TextView tvNoteTitle;
-    TextView tvNoteText;
+    TextView tvNoteContent;
 
 
     //RecycleView
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         tvNoteTitle = (TextView)findViewById(R.id.tv_note_title);
-        tvNoteText = (TextView)findViewById(R.id.tv_note_text);
+        tvNoteContent = (TextView)findViewById(R.id.tv_note_content);
         btnAdd = (FloatingActionButton) findViewById(R.id.btn_add_note);
 
         recyclerView = (RecyclerView)findViewById(R.id.recycler);
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         //3. Specify an adapter
 //        adapter = new NoteAdapter(myDataSet);
         list = new ArrayList<>();
-        adapter = new NoteAdapter(list);
+        adapter = new NoteAdapter(this,list);
         recyclerView.setAdapter(adapter);
 
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
@@ -98,16 +98,16 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
 
                 String title = data.getStringExtra("note_title");
-                String text = data.getStringExtra("note_text");
+                String content = data.getStringExtra("note_content");
 
-                Note note = new Note(title,text);
+                Note note = new Note(title,content);
                 list.add(note);
                 adapter.notifyDataSetChanged();
 
 
             } if (requestCode == Activity.RESULT_CANCELED) {
                 tvNoteTitle.getText();
-                tvNoteText.getText();
+                tvNoteContent.getText();
             }
         }
     }
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         // Do not iconify the icon, expand it by default
         searchView.setIconifiedByDefault(false);
 
-        searchView.setBackgroundColor(Color.WHITE);
+        searchView.setBackgroundColor(Color.TRANSPARENT);
 //        setStatusBarColor(this, Color.parseColor("#4CAF50"));
 
         // SET STATUS BAR COLOLR snippet code

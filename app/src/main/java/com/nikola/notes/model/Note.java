@@ -6,14 +6,14 @@ package com.nikola.notes.model;
 
 public class Note {
     private String title;
-    private String text;
+    private String content;
 
     public Note(){
 
     }
-    public Note(String title, String text) {
+    public Note(String title, String content) {
         this.title = title;
-        this.text = text;
+        this.content = content;
     }
 
     public String getTitle() {
@@ -24,11 +24,11 @@ public class Note {
         this.title = title;
     }
 
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setContent(String content) {
+        this.content = content;
     }
 }
