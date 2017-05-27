@@ -20,14 +20,17 @@ import android.widget.Toast;
 
 import com.nikola.notes.R;
 import com.nikola.notes.adapters.NoteAdapter;
+import com.nikola.notes.db.DataBaseHelper;
 import com.nikola.notes.model.Note;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+//    private Context context;
 
     public final int REQUEST_CODE  = 1;
+
 
     Toolbar toolbar;
     FloatingActionButton btnAdd;
@@ -46,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        // In any activity just pass the context and use the singleton method
+        DataBaseHelper helper = DataBaseHelper.getInstance(this);
 
         // Add Toolbar
         toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -87,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
+
+            finish();
         }
     }
 
@@ -143,9 +152,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here.
         switch (item.getItemId()){
-            case R.id.search:
-                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
-                return true;
+//            case R.id.search:
+//                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+//                return true;
             case R.id.edit:
                 Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show();
                 return true;
