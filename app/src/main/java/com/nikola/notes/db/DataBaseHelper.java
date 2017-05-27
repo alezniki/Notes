@@ -1,8 +1,13 @@
 package com.nikola.notes.db;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import com.nikola.notes.model.Note;
 
 /**
  * Created by nikola on 5/27/17.
@@ -56,7 +61,6 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         // Called when the table is created for the first time,
         // if a database already exists this method will not be called
         db.execSQL(CREATE_TABLE);
-
     }
 
     // Implement onUpgrade method
@@ -68,6 +72,60 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         }
 
         onCreate(db);
+    }
 
+
+    /* TODO DATABASE CRUD OPERATIONS Create, Read, Update, Delete
+    * */
+
+    /* Inserting New Records OR Updating Existing New Records Into Database */
+
+    public long addInsertQuery(Note note) {
+        // UPDATE if note already exists, INSERT if note does not already exists
+
+        // Create and/or open Database for writing
+        SQLiteDatabase db = getWritableDatabase();
+        long noteID = -1;
+
+        // Wrap our Insert in a transaction - for database performance and consistency
+        db.beginTransaction();
+
+
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_NOTE_TITLE,note.getTitle());
+            values.put(KEY_NOTE_CONTENT,note.getContent());
+
+            // First try to update note in case the note already exists
+            int rows = db.update(TABLE_NOTES,values,KEY_NOTE_CONTENT +"= ?" ,new String[]{note.getContent()});
+
+            // Check if update succeeded
+            if (rows == 1) {
+                // Get the primary key of the note we just updated
+                String selectQuery = String.format("SELECT %s FROM %s WHERE %s = ?", KEY_NOTE_ID, TABLE_NOTES, KEY_NOTE_CONTENT);
+                Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(note.getContent())});
+                try {
+                    if (cursor.moveToFirst()) {
+                        noteID = cursor.getInt(0); // columnIndex
+                        db.setTransactionSuccessful();
+                    }
+                } finally {
+                    if (cursor != null && !cursor.isClosed()) {
+                        cursor.close();
+                    }
+                }
+            } else {
+                // Note does not already exists - Insert new note
+                noteID = db.insertOrThrow(TABLE_NOTES,null,values);
+                db.setTransactionSuccessful();
+            }
+
+        } catch (Exception e) {
+            Log.v("TAG", "ERROR WHILE TRYING TO ADD OR UPDATE NOTE");
+        } finally {
+            db.endTransaction();
+        }
+
+        return noteID;
     }
 }
