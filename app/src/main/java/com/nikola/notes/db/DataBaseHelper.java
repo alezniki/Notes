@@ -9,6 +9,9 @@ import android.util.Log;
 
 import com.nikola.notes.model.Note;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by nikola on 5/27/17.
  */
@@ -127,5 +130,37 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         }
 
         return noteID;
+    }
+
+    /* Querying Records */
+
+    public List<Note> getAllNotes() {
+        List notes = new ArrayList();
+
+        String selectQuery = String.format("SELECT FROM %s WHERE $s = ?");
+
+        // getReadableDatabase() and getWriteableDatabase return the same object
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    Note newNote = new Note();
+                    newNote.setTitle(cursor.getString(cursor.getColumnIndex(KEY_NOTE_TITLE)));
+                    newNote.setContent(cursor.getString(cursor.getColumnIndex(KEY_NOTE_CONTENT)));
+
+                    notes.add(newNote);
+                } while (cursor.moveToNext());
+            }
+
+        } catch (Exception e) {
+            Log.v("TAG", "ERROR WHILE TRYING TO GET NOTE FROM DATABASE");
+        }  finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+
+        return notes;
     }
 }
