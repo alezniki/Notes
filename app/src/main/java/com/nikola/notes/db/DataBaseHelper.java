@@ -81,7 +81,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
     /* TODO DATABASE CRUD OPERATIONS Create, Read, Update, Delete
     * */
 
-    /* Inserting New Records OR Updating Existing New Records Into Database */
+    /* Insert OR Update Records Into Database */
 
     public long addInsertQuery(Note note) {
         // UPDATE if note already exists, INSERT if note does not already exists
@@ -100,13 +100,20 @@ public class DataBaseHelper extends SQLiteOpenHelper{
             values.put(KEY_NOTE_CONTENT,note.getContent());
 
             // First try to update note in case the note already exists
-            int rows = db.update(TABLE_NOTES,values,KEY_NOTE_CONTENT +"= ?" ,new String[]{note.getContent()});
+            //table,values,whereClause,whereArgs
+            int rows = db.update(TABLE_NOTES,values,KEY_NOTE_TITLE +"= ?, " + KEY_NOTE_CONTENT + "= ?",
+                    new String[]{note.getTitle(), note.getContent()});
 
             // Check if update succeeded
             if (rows == 1) {
                 // Get the primary key of the note we just updated
-                String selectQuery = String.format("SELECT %s FROM %s WHERE %s = ?", KEY_NOTE_ID, TABLE_NOTES, KEY_NOTE_CONTENT);
-                Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(note.getContent())});
+                String selectQuery = String.format("SELECT %s FROM %s WHERE %s = ? OR %s = ?",
+                        KEY_NOTE_ID, TABLE_NOTES, KEY_NOTE_TITLE, KEY_NOTE_CONTENT);
+                String[] columns = new String[]{String.valueOf(note.getTitle()),String.valueOf(note.getContent())};
+
+                // sql, selectionArgs
+                Cursor cursor = db.rawQuery(selectQuery, columns);
+
                 try {
                     if (cursor.moveToFirst()) {
                         noteID = cursor.getInt(0); // columnIndex
@@ -119,6 +126,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
                 }
             } else {
                 // Note does not already exists - Insert new note
+                // table,columnHck,values
                 noteID = db.insertOrThrow(TABLE_NOTES,null,values);
                 db.setTransactionSuccessful();
             }
@@ -132,12 +140,14 @@ public class DataBaseHelper extends SQLiteOpenHelper{
         return noteID;
     }
 
-    /* Querying Records */
+    /* Search Records From Database */
 
     public List<Note> getAllNotes() {
+
         List notes = new ArrayList();
 
-        String selectQuery = String.format("SELECT FROM %s WHERE $s = ?");
+        String selectQuery = String.format("SELECT FROM %s WHERE %s = ? OR %s = ?",
+                TABLE_NOTES, KEY_NOTE_TITLE, KEY_NOTE_CONTENT);
 
         // getReadableDatabase() and getWriteableDatabase return the same object
         SQLiteDatabase db = getReadableDatabase();
@@ -163,4 +173,24 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
         return notes;
     }
+
+    /* Delete Records From Database */
+
+    public void deleteQuery(long row) {
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+
+        try {
+            // DELETE FROM TABLE_NOTES WHERE ID = row
+            // table,whereClause,whereArgs
+            db.delete(TABLE_NOTES, KEY_NOTE_ID + "=" + row, null);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.v("TAG", "ERROR WHILE TRYING TO DELETE NOTE");
+        } finally {
+            db.endTransaction();
+        }
+    }
+
 }
