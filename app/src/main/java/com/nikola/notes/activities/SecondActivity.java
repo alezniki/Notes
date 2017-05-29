@@ -22,6 +22,7 @@ public class SecondActivity extends MainActivity {
     Toolbar toolbar;
     EditText etNoteTitle;
     EditText etNoteContent;
+    DataBaseHelper helper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class SecondActivity extends MainActivity {
 
 
         // In any activity just pass the context and use the singleton method
-        DataBaseHelper helper = DataBaseHelper.getInstance(this);
+        helper= DataBaseHelper.getInstance(this);
 
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -66,17 +67,12 @@ public class SecondActivity extends MainActivity {
 
 
         if (title.trim().isEmpty() && content.trim().isEmpty()) {
-            //Snackbar.make(findViewById(R.id.save),"Enter note dummy", Snackbar.LENGTH_SHORT).show();
             Intent returnIntent = new Intent();
             setResult(Activity.RESULT_CANCELED, returnIntent);
             finish();
         } else {
-            //Intent intent = new Intent(SecondActivity.this, MainActivity.class);
-            //intent.putExtra("note", note); // String name, Bundle value
-            //startActivity(intent);
-
             Intent returnIntent = new Intent();
-            returnIntent.putExtra("note_title",title);
+            returnIntent.putExtra("title",title);
             returnIntent.putExtra("note_content",content);
             setResult(Activity.RESULT_OK, returnIntent);
             finish();

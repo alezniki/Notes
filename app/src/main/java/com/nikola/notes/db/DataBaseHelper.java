@@ -22,19 +22,19 @@ public class DataBaseHelper extends SQLiteOpenHelper{
     private static final int DATABASE_VERSION = 1;
 
     // Table Name
-    private static final String TABLE_NOTES = "notes";
+    public static final String TABLE_NOTES = "notes";
 
     // Table Columns
-    private static final String KEY_NOTE_ID = "id";
-    private static final String KEY_NOTE_TITLE = "title";
-    private static final String KEY_NOTE_CONTENT = "content";
+    public static final String KEY_NOTE_ID = "id";
+    public static final String KEY_NOTE_TITLE = "title";
+    public static final String KEY_NOTE_CONTENT = "content";
 
     // Create Table
     private static final String CREATE_TABLE =
-            "CREATE TABLE IF NOT EXISTS " + TABLE_NOTES + "(" +
+            "CREATE TABLE IF NOT EXISTS " + TABLE_NOTES + " ( " +
                     KEY_NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + // Define a primary key
-                    KEY_NOTE_TITLE  + " TEXT " +
-                    KEY_NOTE_CONTENT + " TEXT" + ")";
+                    KEY_NOTE_TITLE  + " TEXT, " +
+                    KEY_NOTE_CONTENT + " TEXT " + " )";
 
 
     // Apply singleton pattern to avoid memory leaks and unnecessary reallocation
@@ -101,7 +101,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
             // First try to update note in case the note already exists
             //table,values,whereClause,whereArgs
-            int rows = db.update(TABLE_NOTES,values,KEY_NOTE_TITLE +"= ?, " + KEY_NOTE_CONTENT + "= ?",
+            int rows = db.update(TABLE_NOTES,values,KEY_NOTE_TITLE + " = ?, " + KEY_NOTE_CONTENT + " = ? ",
                     new String[]{note.getTitle(), note.getContent()});
 
             // Check if update succeeded
@@ -146,7 +146,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
         List notes = new ArrayList();
 
-        String selectQuery = String.format("SELECT FROM %s WHERE %s = ? OR %s = ?",
+        String selectQuery = String.format("SELECT * FROM %s WHERE %s = ? OR %s = ? ",
                 TABLE_NOTES, KEY_NOTE_TITLE, KEY_NOTE_CONTENT);
 
         // getReadableDatabase() and getWriteableDatabase return the same object

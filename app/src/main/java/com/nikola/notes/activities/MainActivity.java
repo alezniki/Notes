@@ -30,13 +30,13 @@ public class MainActivity extends AppCompatActivity {
 //    private Context context;
 
     public final int REQUEST_CODE  = 1;
+    private DataBaseHelper helper;
 
 
     Toolbar toolbar;
     FloatingActionButton btnAdd;
     TextView tvNoteTitle;
     TextView tvNoteContent;
-
 
     //RecycleView
     private RecyclerView recyclerView;
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // In any activity just pass the context and use the singleton method
-        DataBaseHelper helper = DataBaseHelper.getInstance(this);
+        helper = DataBaseHelper.getInstance(this);
 
         // Add Toolbar
         toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -108,10 +108,17 @@ public class MainActivity extends AppCompatActivity {
 
                 String title = data.getStringExtra("note_title");
                 String content = data.getStringExtra("note_content");
-
                 Note note = new Note(title,content);
+
+//                List<Note> allNotes = helper.getAllNotes();
+//                for (Note n : allNotes) {
+//
+//                    helper.addInsertQuery(n);
+//                }
+
                 list.add(note);
                 adapter.notifyDataSetChanged();
+
 
 
             } if (requestCode == Activity.RESULT_CANCELED) {
@@ -138,12 +145,6 @@ public class MainActivity extends AppCompatActivity {
         searchView.setBackgroundColor(Color.TRANSPARENT);
 //        setStatusBarColor(this, Color.parseColor("#4CAF50"));
 
-        // SET STATUS BAR COLOLR snippet code
-//        Window window = this.getWindow();
-//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorAccent));
-
         return true;
     }
 
@@ -152,9 +153,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here.
         switch (item.getItemId()){
-//            case R.id.search:
-//                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
-//                return true;
+            case R.id.search:
+                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+                return true;
             case R.id.edit:
                 Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show();
                 return true;
@@ -165,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnAddNote(View view) {
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-        //startActivity(intent);
         startActivityForResult(intent,REQUEST_CODE);
     }
 }
