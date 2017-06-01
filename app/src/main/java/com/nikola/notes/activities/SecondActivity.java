@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.widget.EditText;
 
 import com.nikola.notes.R;
-import com.nikola.notes.db.DataBaseHelper;
 
 /**
  * Created by Dzoni on 5/16/2017.
@@ -22,16 +21,11 @@ public class SecondActivity extends MainActivity {
     Toolbar toolbar;
     EditText etNoteTitle;
     EditText etNoteContent;
-    DataBaseHelper helper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-
-
-        // In any activity just pass the context and use the singleton method
-        helper= DataBaseHelper.getInstance(this);
 
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,7 +66,7 @@ public class SecondActivity extends MainActivity {
             finish();
         } else {
             Intent returnIntent = new Intent();
-            returnIntent.putExtra("title",title);
+            returnIntent.putExtra("note_title",title);
             returnIntent.putExtra("note_content",content);
             setResult(Activity.RESULT_OK, returnIntent);
             finish();

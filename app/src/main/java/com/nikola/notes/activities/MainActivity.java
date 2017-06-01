@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.nikola.notes.R;
 import com.nikola.notes.adapters.NoteAdapter;
-import com.nikola.notes.db.DataBaseHelper;
 import com.nikola.notes.model.Note;
 
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
 //    private Context context;
 
     public final int REQUEST_CODE  = 1;
-    private DataBaseHelper helper;
 
 
     Toolbar toolbar;
@@ -49,10 +47,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        // In any activity just pass the context and use the singleton method
-        helper = DataBaseHelper.getInstance(this);
 
         // Add Toolbar
         toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -109,12 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 String title = data.getStringExtra("note_title");
                 String content = data.getStringExtra("note_content");
                 Note note = new Note(title,content);
-
-//                List<Note> allNotes = helper.getAllNotes();
-//                for (Note n : allNotes) {
-//
-//                    helper.addInsertQuery(n);
-//                }
 
                 list.add(note);
                 adapter.notifyDataSetChanged();

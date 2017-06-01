@@ -1,196 +1,68 @@
 package com.nikola.notes.db;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
+import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import com.nikola.notes.model.Note;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLException;
 
 /**
  * Created by nikola on 5/27/17.
  */
 
-public class DataBaseHelper extends SQLiteOpenHelper{
+public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
+
     // Database Info
     private static final String DATABASE_NAME = "notesDB";
     private static final int DATABASE_VERSION = 1;
 
-    // Table Name
-    public static final String TABLE_NOTES = "notes";
+    private Dao<Note, Integer> noteDao = null;
 
-    // Table Columns
-    public static final String KEY_NOTE_ID = "id";
-    public static final String KEY_NOTE_TITLE = "title";
-    public static final String KEY_NOTE_CONTENT = "content";
-
-    // Create Table
-    private static final String CREATE_TABLE =
-            "CREATE TABLE IF NOT EXISTS " + TABLE_NOTES + " ( " +
-                    KEY_NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + // Define a primary key
-                    KEY_NOTE_TITLE  + " TEXT, " +
-                    KEY_NOTE_CONTENT + " TEXT " + " )";
-
-
-    // Apply singleton pattern to avoid memory leaks and unnecessary reallocation
-    private static DataBaseHelper sInstance;
-
-
-    // Create constructor matching super - private to prevent direct instantiation
-    // Make a call to the static method getInstance() instead
-    private DataBaseHelper(Context context) {
-        //super(context, name, factory, version);
-        super(context,DATABASE_NAME,null,DATABASE_VERSION);
+    public DataBaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // The static getInstance() method ensures that only one DataBaseHelper will ever exists at any given time
-    public static synchronized DataBaseHelper getInstance(Context context) {
-        // Use the application context which will ensure that you don't accidentally leak an Activity's context
-        if (sInstance == null) {
-            sInstance = new DataBaseHelper(context.getApplicationContext());
+    @Override
+    public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
+        try {
+            TableUtils.createTable(connectionSource, Note.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return sInstance;
-
     }
 
-    // Implement onCreate method
     @Override
-    public void onCreate(SQLiteDatabase db) {
-        // Called when the table is created for the first time,
-        // if a database already exists this method will not be called
-        db.execSQL(CREATE_TABLE);
-    }
-
-    // Implement onUpgrade method
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Called when the database needs to be upgrade: Drop all old tables and recreate them
+    public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         if (oldVersion != newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTES);
-        }
-
-        onCreate(db);
-    }
-
-
-    /* TODO DATABASE CRUD OPERATIONS Create, Read, Update, Delete
-    * */
-
-    /* Insert OR Update Records Into Database */
-
-    public long addInsertQuery(Note note) {
-        // UPDATE if note already exists, INSERT if note does not already exists
-
-        // Create and/or open Database for writing
-        SQLiteDatabase db = getWritableDatabase();
-        long noteID = -1;
-
-        // Wrap our Insert in a transaction - for database performance and consistency
-        db.beginTransaction();
-
-
-        try {
-            ContentValues values = new ContentValues();
-            values.put(KEY_NOTE_TITLE,note.getTitle());
-            values.put(KEY_NOTE_CONTENT,note.getContent());
-
-            // First try to update note in case the note already exists
-            //table,values,whereClause,whereArgs
-            int rows = db.update(TABLE_NOTES,values,KEY_NOTE_TITLE + " = ?, " + KEY_NOTE_CONTENT + " = ? ",
-                    new String[]{note.getTitle(), note.getContent()});
-
-            // Check if update succeeded
-            if (rows == 1) {
-                // Get the primary key of the note we just updated
-                String selectQuery = String.format("SELECT %s FROM %s WHERE %s = ? OR %s = ?",
-                        KEY_NOTE_ID, TABLE_NOTES, KEY_NOTE_TITLE, KEY_NOTE_CONTENT);
-                String[] columns = new String[]{String.valueOf(note.getTitle()),String.valueOf(note.getContent())};
-
-                // sql, selectionArgs
-                Cursor cursor = db.rawQuery(selectQuery, columns);
-
-                try {
-                    if (cursor.moveToFirst()) {
-                        noteID = cursor.getInt(0); // columnIndex
-                        db.setTransactionSuccessful();
-                    }
-                } finally {
-                    if (cursor != null && !cursor.isClosed()) {
-                        cursor.close();
-                    }
-                }
-            } else {
-                // Note does not already exists - Insert new note
-                // table,columnHck,values
-                noteID = db.insertOrThrow(TABLE_NOTES,null,values);
-                db.setTransactionSuccessful();
-            }
-
-        } catch (Exception e) {
-            Log.v("TAG", "ERROR WHILE TRYING TO ADD OR UPDATE NOTE");
-        } finally {
-            db.endTransaction();
-        }
-
-        return noteID;
-    }
-
-    /* Search Records From Database */
-
-    public List<Note> getAllNotes() {
-
-        List notes = new ArrayList();
-
-        String selectQuery = String.format("SELECT * FROM %s WHERE %s = ? OR %s = ? ",
-                TABLE_NOTES, KEY_NOTE_TITLE, KEY_NOTE_CONTENT);
-
-        // getReadableDatabase() and getWriteableDatabase return the same object
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        try {
-            if (cursor.moveToFirst()) {
-                do {
-                    Note newNote = new Note();
-                    newNote.setTitle(cursor.getString(cursor.getColumnIndex(KEY_NOTE_TITLE)));
-                    newNote.setContent(cursor.getString(cursor.getColumnIndex(KEY_NOTE_CONTENT)));
-
-                    notes.add(newNote);
-                } while (cursor.moveToNext());
-            }
-
-        } catch (Exception e) {
-            Log.v("TAG", "ERROR WHILE TRYING TO GET NOTE FROM DATABASE");
-        }  finally {
-            if (cursor != null && !cursor.isClosed()) {
-                cursor.close();
+            try {
+                TableUtils.dropTable(connectionSource, Note.class,true);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
-
-        return notes;
     }
 
-    /* Delete Records From Database */
 
-    public void deleteQuery(long row) {
-
-        SQLiteDatabase db = getWritableDatabase();
-        db.beginTransaction();
-
-        try {
-            // DELETE FROM TABLE_NOTES WHERE ID = row
-            // table,whereClause,whereArgs
-            db.delete(TABLE_NOTES, KEY_NOTE_ID + "=" + row, null);
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            Log.v("TAG", "ERROR WHILE TRYING TO DELETE NOTE");
-        } finally {
-            db.endTransaction();
+    // Jedan DAO objekat sa kojim komuniciramo
+    // Ukoliko zelimo vise tabela potrebno je napraviti DAO objekat za svaku tabelu
+    public Dao<Note, Integer> getNoteDao() throws SQLException {
+        if (noteDao == null){
+            noteDao = getDao(Note.class);
         }
+
+        return noteDao;
     }
 
+    // Clear resources and close database
+    @Override
+    public void close() {
+        noteDao = null;
+
+        super.close();
+    }
 }
