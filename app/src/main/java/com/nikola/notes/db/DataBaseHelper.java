@@ -83,19 +83,20 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
     /* Insert OR Update Records Into Database */
 
-    public long addInsertQuery(Note note) {
+    public long addInsertQuery(ContentValues values) {
         // UPDATE if note already exists, INSERT if note does not already exists
 
         // Create and/or open Database for writing
         SQLiteDatabase db = getWritableDatabase();
         long noteID = -1;
+        Note note = new Note();
 
         // Wrap our Insert in a transaction - for database performance and consistency
         db.beginTransaction();
 
 
         try {
-            ContentValues values = new ContentValues();
+//            ContentValues values = new ContentValues();
             values.put(KEY_NOTE_TITLE,note.getTitle());
             values.put(KEY_NOTE_CONTENT,note.getContent());
 

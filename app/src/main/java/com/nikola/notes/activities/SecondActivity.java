@@ -73,7 +73,7 @@ public class SecondActivity extends MainActivity {
         } else {
             Intent returnIntent = new Intent();
             returnIntent.putExtra("title",title);
-            returnIntent.putExtra("note_content",content);
+            returnIntent.putExtra("content",content);
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
 

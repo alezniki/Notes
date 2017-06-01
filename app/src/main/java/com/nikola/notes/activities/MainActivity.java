@@ -2,6 +2,7 @@ package com.nikola.notes.activities;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -106,16 +107,15 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
 
-                String title = data.getStringExtra("note_title");
-                String content = data.getStringExtra("note_content");
+                String title = data.getStringExtra("title");
+                String content = data.getStringExtra("content");
                 Note note = new Note(title,content);
 
-//                List<Note> allNotes = helper.getAllNotes();
-//                for (Note n : allNotes) {
-//
-//                    helper.addInsertQuery(n);
-//                }
+                ContentValues values = new ContentValues();
+                values.put(DataBaseHelper.KEY_NOTE_TITLE, title);
+                values.put(DataBaseHelper.KEY_NOTE_CONTENT,content);
 
+                helper.addInsertQuery(values);
                 list.add(note);
                 adapter.notifyDataSetChanged();
 
@@ -168,4 +168,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
         startActivityForResult(intent,REQUEST_CODE);
     }
+
 }
