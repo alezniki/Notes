@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
         handleIntent(getIntent());
-
     }
 
     @Override
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
-
+            
             finish();
         }
     }
@@ -99,17 +98,21 @@ public class MainActivity extends AppCompatActivity {
 
                 String title = data.getStringExtra("note_title");
                 String content = data.getStringExtra("note_content");
+
                 try {
-                    final Dao<Note,Integer> noteIntegerDao = getHelper().getNoteDao();
+                    final Dao<Note,Integer> noteDao = getHelper().getNoteDao();
 
                     Note note = new Note(title,content);
+                    getHelper().getNoteDao().create(note);
 
-                    list = noteIntegerDao.queryForAll();
+                    list = noteDao.queryForAll();
+
                     adapter = new NoteAdapter(this,list);
                     recyclerView.setAdapter(adapter);
 
                     list.add(note);
                     adapter.notifyDataSetChanged();
+
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
