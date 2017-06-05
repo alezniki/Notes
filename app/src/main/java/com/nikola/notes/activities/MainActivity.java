@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
@@ -26,7 +25,6 @@ import com.nikola.notes.db.DataBaseHelper;
 import com.nikola.notes.model.Note;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     //private RecyclerView.Adapter adapter;
     private NoteAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private List<Note> list = new ArrayList<>();
+    private List<Note> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
         handleIntent(getIntent());
+
     }
 
     @Override
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
-            
+
             finish();
         }
     }
@@ -96,11 +95,11 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
 
-                String title = data.getStringExtra("note_title");
-                String content = data.getStringExtra("note_content");
-
                 try {
                     final Dao<Note,Integer> noteDao = getHelper().getNoteDao();
+
+                    String title = data.getStringExtra("note_title");
+                    String content = data.getStringExtra("note_content");
 
                     Note note = new Note(title,content);
                     getHelper().getNoteDao().create(note);
@@ -149,10 +148,8 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here.
         switch (item.getItemId()){
             case R.id.search:
-                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.edit:
-                Toast.makeText(this, "Edit", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

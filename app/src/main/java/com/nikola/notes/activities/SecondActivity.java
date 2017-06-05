@@ -59,18 +59,18 @@ public class SecondActivity extends MainActivity {
         String title = String.valueOf(etNoteTitle.getText());
         String content = String.valueOf(etNoteContent.getText());
 
-
         if (title.trim().isEmpty() && content.trim().isEmpty()) {
             Intent returnIntent = new Intent();
             setResult(Activity.RESULT_CANCELED, returnIntent);
             finish();
         } else {
             Intent returnIntent = new Intent();
-            returnIntent.putExtra("note_title",title);
+
+            returnIntent.putExtra("note_title", title);
             returnIntent.putExtra("note_content",content);
+
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
-
         }
 
     }
