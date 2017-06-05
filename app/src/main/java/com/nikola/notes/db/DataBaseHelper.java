@@ -2,6 +2,7 @@ package com.nikola.notes.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -33,6 +34,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Note.class);
         } catch (SQLException e) {
             e.printStackTrace();
+            Log.e(DataBaseHelper.class.getName(),"UNABLE TO CREATE DATABASE",e);
         }
     }
 
@@ -43,13 +45,15 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
                 TableUtils.dropTable(connectionSource, Note.class,true);
             } catch (SQLException e) {
                 e.printStackTrace();
+                Log.e(DataBaseHelper.class.getName(),
+                        "UNABLE TO UPGRADE DATABASE FROM VERSION " + oldVersion + " TO NEW " + newVersion, e);
             }
         }
     }
 
 
     // Jedan DAO objekat sa kojim komuniciramo
-    // Ukoliko zelimo vise tabela potrebno je napraviti DAO objekat za svaku tabelu
+    // Insert, delete, read, update everything will be happened through DAOs
     public Dao<Note, Integer> getNoteDao() throws SQLException {
         if (noteDao == null){
             noteDao = getDao(Note.class);

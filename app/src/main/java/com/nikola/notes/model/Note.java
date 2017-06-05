@@ -25,7 +25,7 @@ public class Note {
     @DatabaseField(columnName = NOTE_CONTENT)
     private String content;
 
-
+    // Default constructor is needed for the SQLite
     public Note(){
 
     }

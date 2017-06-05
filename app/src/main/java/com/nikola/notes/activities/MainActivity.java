@@ -18,10 +18,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
 import com.nikola.notes.R;
 import com.nikola.notes.adapters.NoteAdapter;
+import com.nikola.notes.db.DataBaseHelper;
 import com.nikola.notes.model.Note;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     public final int REQUEST_CODE  = 1;
 
-
+    private DataBaseHelper dataBaseHelper = null;
     Toolbar toolbar;
     FloatingActionButton btnAdd;
     TextView tvNoteTitle;
@@ -41,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     //private RecyclerView.Adapter adapter;
     private NoteAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private List<Note> list;
+    private List<Note> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +69,6 @@ public class MainActivity extends AppCompatActivity {
         // 2. Use a linear layout manager
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
-
-        //3. Specify an adapter
-//        adapter = new NoteAdapter(myDataSet);
-        list = new ArrayList<>();
-        adapter = new NoteAdapter(this,list);
-        recyclerView.setAdapter(adapter);
 
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
         handleIntent(getIntent());
@@ -102,14 +99,21 @@ public class MainActivity extends AppCompatActivity {
 
                 String title = data.getStringExtra("note_title");
                 String content = data.getStringExtra("note_content");
-                Note note = new Note(title,content);
+                try {
+                    final Dao<Note,Integer> noteIntegerDao = getHelper().getNoteDao();
 
-                list.add(note);
-                adapter.notifyDataSetChanged();
+                    Note note = new Note(title,content);
 
+                    list = noteIntegerDao.queryForAll();
+                    adapter = new NoteAdapter(this,list);
+                    recyclerView.setAdapter(adapter);
 
-
-            } if (requestCode == Activity.RESULT_CANCELED) {
+                    list.add(note);
+                    adapter.notifyDataSetChanged();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            } else if (requestCode == Activity.RESULT_CANCELED) {
                 tvNoteTitle.getText();
                 tvNoteContent.getText();
             }
@@ -155,5 +159,22 @@ public class MainActivity extends AppCompatActivity {
     public void btnAddNote(View view) {
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
         startActivityForResult(intent,REQUEST_CODE);
+    }
+
+    private DataBaseHelper getHelper() {
+        if (dataBaseHelper == null) {
+            dataBaseHelper = OpenHelperManager.getHelper(this, DataBaseHelper.class);
+        }
+        return dataBaseHelper;
+    }
+
+    // You'll need this in your class to release the helper when done.
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dataBaseHelper != null) {
+            OpenHelperManager.releaseHelper();
+            dataBaseHelper = null;
+        }
     }
 }
