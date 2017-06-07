@@ -52,7 +52,6 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
 
-    // Jedan DAO objekat sa kojim komuniciramo
     // Insert, delete, read, update everything will be happened through DAOs
     public Dao<Note, Integer> getNoteDao() throws SQLException {
         if (noteDao == null){

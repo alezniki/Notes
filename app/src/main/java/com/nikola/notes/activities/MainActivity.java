@@ -8,23 +8,24 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.dao.Dao;
 import com.nikola.notes.R;
 import com.nikola.notes.adapters.NoteAdapter;
 import com.nikola.notes.db.DataBaseHelper;
 import com.nikola.notes.model.Note;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,12 +39,10 @@ public class MainActivity extends AppCompatActivity {
     TextView tvNoteTitle;
     TextView tvNoteContent;
 
-    //RecycleView
-    private RecyclerView recyclerView;
-    //private RecyclerView.Adapter adapter;
-    private NoteAdapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
-    private List<Note> list;
+
+    NoteAdapter adapter;
+    ListView listView;
+    List<Note> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,15 +57,28 @@ public class MainActivity extends AppCompatActivity {
         tvNoteContent = (TextView)findViewById(R.id.tv_note_content);
         btnAdd = (FloatingActionButton) findViewById(R.id.btn_add_note);
 
-        recyclerView = (RecyclerView)findViewById(R.id.recycler);
 
-        // 1. Use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
+        // Construct the data source
+        list = new ArrayList<>();
+        // Create the adapter to convert the array to views
+        adapter = new NoteAdapter(this, list);
+        // Attach the adapter to a ListView
+        listView = (ListView) findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
 
-        // 2. Use a linear layout manager
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        try {
+            list = getHelper().getNoteDao().queryForAll();
+            adapter.addAll(list); // Note Collection
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(MainActivity.this,"Positon: " + list.get(position).getId(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
         handleIntent(getIntent());
@@ -95,26 +107,22 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
 
+                String title = data.getStringExtra("note_title");
+                String content = data.getStringExtra("note_content");
+
+                Note note = new Note(title,content);
+
                 try {
-                    final Dao<Note,Integer> noteDao = getHelper().getNoteDao();
-
-                    String title = data.getStringExtra("note_title");
-                    String content = data.getStringExtra("note_content");
-
-                    Note note = new Note(title,content);
+                    // Create note into database
                     getHelper().getNoteDao().create(note);
 
-                    list = noteDao.queryForAll();
-
-                    adapter = new NoteAdapter(this,list);
-                    recyclerView.setAdapter(adapter);
-
-                    list.add(note);
+                    adapter.add(note);
                     adapter.notifyDataSetChanged();
-
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+
+
             } else if (requestCode == Activity.RESULT_CANCELED) {
                 tvNoteTitle.getText();
                 tvNoteContent.getText();

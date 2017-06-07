@@ -1,10 +1,10 @@
 package com.nikola.notes.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nikola.notes.R;
@@ -13,70 +13,50 @@ import com.nikola.notes.model.Note;
 import java.util.List;
 
 /**
- * Created by nikola on 5/19/17.
+ * Created by nikola on 6/8/17.
  */
 
-public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
-    private Context context;
-    private List<Note> list;
+public class NoteAdapter extends ArrayAdapter<Note> {
 
+    //View lookup cache: To improve performance for faster item loading
+    private static class ViewHolder {
+        TextView tvTitle;
+        TextView tvText;
+    }
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        public TextView title;
-        public TextView content;
+    public NoteAdapter(Context context, List<Note> notes) {
 
-        public ViewHolder(View v) {
-            super(v);
-            title = (TextView) v.findViewById(R.id.tv_note_title);
-            content = (TextView) v.findViewById(R.id.tv_note_content);
+        super(context, 0, notes);
+    }
+
+    @Override
+    public View getView(int position, View view, ViewGroup parent) {
+        // Get the data item for this position
+        Note note = getItem(position);
+
+        // Check if an existing view is being reused, otherwise inflate the view
+        ViewHolder viewHolder; // view lookup cache stored in tag
+        if (view == null) {
+            viewHolder = new ViewHolder();
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            view = inflater.inflate(R.layout.list_items,parent,false);
+
+            // Lookup view for data population
+            viewHolder.tvTitle = (TextView) view.findViewById(R.id.tv_note_title);
+            viewHolder.tvText = (TextView) view.findViewById(R.id.tv_note_content);
+
+            // Cache the viewHolder object inside the fresh view
+            view.setTag(viewHolder);
+        } else {
+            // View is being recycled, retrieve the viewHolder object from tag
+            viewHolder = (ViewHolder) view.getTag();
         }
-    }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public NoteAdapter(Context context, List<Note> list) {
-        this.context = context;
-        this.list = list;
-    }
+        // Populate the data from the data object via the viewHolder object into the template view.
+        viewHolder.tvTitle.setText(note.getTitle());
+        viewHolder.tvText.setText(note.getContent());
 
-    public NoteAdapter() {}
-
-     // Create new views (invoked by the layout manager)
-    @Override
-    public NoteAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
-        View v = LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.list_items, parent, false);
-
-        //ViewHolder vh = new ViewHolder(v);
-        //return vh;
-        return new ViewHolder(v);
-    }
-
-    // Replace the contents of a view (invoked by the layout manager)
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        //holder.mTextView.setText(mDataset[position]);
-        Note note = list.get(position);
-        holder.title.setText(note.getTitle()); // Note Title
-        holder.content.setText(note.getContent()); // Note Text
-
-    }
-
-    // Return the size of your dataset (invoked by the layout manager)
-    @Override
-    public int getItemCount() {
-        return list.size();
-        //return mDataset.length;
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
+        // Return the completed view to render on screen
+        return view;
     }
 }
