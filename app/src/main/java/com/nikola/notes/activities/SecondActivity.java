@@ -18,9 +18,9 @@ import com.nikola.notes.R;
 public class SecondActivity extends MainActivity {
 //    private Context context;
 
-    Toolbar toolbar;
-    EditText etNoteTitle;
-    EditText etNoteContent;
+    private Toolbar toolbar;
+    private EditText etNoteTitle;
+    private EditText etNoteContent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

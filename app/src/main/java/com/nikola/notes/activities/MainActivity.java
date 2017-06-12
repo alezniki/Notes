@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.nikola.notes.R;
@@ -28,21 +27,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 //    private Context context;
 
     public final int REQUEST_CODE  = 1;
 
     private DataBaseHelper dataBaseHelper = null;
-    Toolbar toolbar;
-    FloatingActionButton btnAdd;
-    TextView tvNoteTitle;
-    TextView tvNoteContent;
+
+    private Toolbar toolbar;
+    private FloatingActionButton btnAdd;
+    private TextView tvNoteTitle;
+    private TextView tvNoteContent;
 
 
-    NoteAdapter adapter;
-    ListView listView;
-    List<Note> list;
+    private NoteAdapter adapter;
+    private ListView listView;
+    private List<Note> list;
+
+    // This holds the value of the note position, which user has selected for further action
+    private int selectedNote = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +79,15 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this,"Positon: " + list.get(position).getId(), Toast.LENGTH_SHORT).show();
+               //Toast.makeText(MainActivity.this,"Positon: " + list.get(position).getId(), Toast.LENGTH_SHORT).show();
+                if (position > 0) {
+                    selectedNote = position - 1;
+                    Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
+                    intent.putExtra("details", String.valueOf(list.get(selectedNote)));
+                    startActivity(intent);
+                    finish();
+                }
+
             }
         });
 
@@ -185,4 +196,5 @@ public class MainActivity extends AppCompatActivity {
             dataBaseHelper = null;
         }
     }
+
 }

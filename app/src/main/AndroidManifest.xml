@@ -26,11 +26,18 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <!-- Declate SecondActivity -->
+        <!-- Declare SecondActivity -->
         <!--windowSoftInputMode="adjustResize" to adjust the keyboard-->
         <activity
             android:windowSoftInputMode="adjustResize"
             android:name=".activities.SecondActivity"
+            android:label="@string/app_name">
+        </activity>
+
+        <!-- Declare NoteDetailActivity -->
+        <activity
+            android:windowSoftInputMode="adjustResize"
+            android:name=".activities.NoteDetailActivity"
             android:label="@string/app_name">
         </activity>
     </application>
