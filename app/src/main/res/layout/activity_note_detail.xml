@@ -3,19 +3,18 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include layout="@layout/toolbar"/>
 
-    <TextView
-        android:text="TITLE"
-        android:id="@+id/tv_detail_note_title"
+    <EditText
+        android:id="@+id/et_detail_note_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="textStart"
         android:textSize="@dimen/text"
         android:textStyle="bold|italic"/>
 
-    <TextView
-        android:text="CONTENT"
-        android:id="@+id/tv_detail_note_content"
+    <EditText
+        android:id="@+id/et_detail_note_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="textStart"

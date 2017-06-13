@@ -44,9 +44,6 @@ public class MainActivity extends AppCompatActivity{
     private ListView listView;
     private List<Note> list;
 
-    // This holds the value of the note position, which user has selected for further action
-    private int selectedNote = -1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,13 +76,15 @@ public class MainActivity extends AppCompatActivity{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               //Toast.makeText(MainActivity.this,"Positon: " + list.get(position).getId(), Toast.LENGTH_SHORT).show();
-                if (position > 0) {
-                    selectedNote = position - 1;
+                // This holds the value of the note position, which user has selected for further action
+                if (position > -1) {
+//                    Toast.makeText(MainActivity.this,"Positon: " + list.get(position).getId(), Toast.LENGTH_SHORT).show();
+
                     Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
-                    intent.putExtra("details", String.valueOf(list.get(selectedNote)));
-                    startActivity(intent);
-                    finish();
+                    intent.putExtra("details", list.get(position).getId());
+                    startActivityForResult(intent,REQUEST_CODE);
+
+//                    startActivity(intent);
                 }
 
             }
@@ -110,7 +109,6 @@ public class MainActivity extends AppCompatActivity{
             finish();
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -167,8 +165,6 @@ public class MainActivity extends AppCompatActivity{
         // Handle action bar item clicks here.
         switch (item.getItemId()){
             case R.id.search:
-                return true;
-            case R.id.edit:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
