@@ -21,7 +21,7 @@ public class NoteAdapter extends ArrayAdapter<Note> {
     //View lookup cache: To improve performance for faster item loading
     private static class ViewHolder {
         TextView tvTitle;
-        TextView tvText;
+        TextView tvContent;
     }
 
     public NoteAdapter(Context context, List<Note> notes) {
@@ -43,7 +43,7 @@ public class NoteAdapter extends ArrayAdapter<Note> {
 
             // Lookup view for data population
             viewHolder.tvTitle = (TextView) view.findViewById(R.id.tv_note_title);
-            viewHolder.tvText = (TextView) view.findViewById(R.id.tv_note_content);
+            viewHolder.tvContent = (TextView) view.findViewById(R.id.tv_note_content);
 
             // Cache the viewHolder object inside the fresh view
             view.setTag(viewHolder);
@@ -54,7 +54,7 @@ public class NoteAdapter extends ArrayAdapter<Note> {
 
         // Populate the data from the data object via the viewHolder object into the template view.
         viewHolder.tvTitle.setText(note.getTitle());
-        viewHolder.tvText.setText(note.getContent());
+        viewHolder.tvContent.setText(note.getContent());
 
         // Return the completed view to render on screen
         return view;

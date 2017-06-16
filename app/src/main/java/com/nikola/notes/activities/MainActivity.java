@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +31,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
 //    private Context context;
 
-    public final int REQUEST_CODE  = 1;
+    public final int REQUEST_SAVE_ACTIVITY = 1;
+    public final int REQUEST_NOTE_DETAIL_ACTIVITY = 2;
 
     private DataBaseHelper dataBaseHelper = null;
 
@@ -82,11 +84,8 @@ public class MainActivity extends AppCompatActivity{
 
                     Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
                     intent.putExtra("details", list.get(position).getId());
-                    startActivityForResult(intent,REQUEST_CODE);
-
-//                    startActivity(intent);
+                    startActivityForResult(intent,REQUEST_NOTE_DETAIL_ACTIVITY);
                 }
-
             }
         });
 
@@ -112,31 +111,63 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-                String title = data.getStringExtra("note_title");
-                String content = data.getStringExtra("note_content");
+        switch (requestCode) {
 
-                Note note = new Note(title,content);
+            case REQUEST_SAVE_ACTIVITY:
+                if (resultCode == Activity.RESULT_OK) {
 
-                try {
-                    // Create note into database
-                    getHelper().getNoteDao().create(note);
+                    String title = data.getStringExtra("note_title");
+                    String content = data.getStringExtra("note_content");
 
-                    adapter.add(note);
-                    adapter.notifyDataSetChanged();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                    Note note = new Note(title,content);
+
+                    try {
+                        // Create note into database
+                        getHelper().getNoteDao().create(note);
+
+                        adapter.add(note);
+                        adapter.notifyDataSetChanged();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        Log.v("TAG", "ERROR ON CREATE QUERY: " + e.toString());
+                    }
+
+
+                } else if (requestCode == Activity.RESULT_CANCELED) {
+                    tvNoteTitle.getText();
+                    tvNoteContent.getText();
                 }
 
+                break;
 
-            } else if (requestCode == Activity.RESULT_CANCELED) {
-                tvNoteTitle.getText();
-                tvNoteContent.getText();
-            }
+            case REQUEST_NOTE_DETAIL_ACTIVITY:
+                if (resultCode == Activity.RESULT_OK) {
+                    String titleUpdated = data.getStringExtra("title_updated");
+                    String contentUpdated = data.getStringExtra("content_updated");
+
+                    Note note = new Note(titleUpdated,contentUpdated);
+
+                    try {
+                        // Update note into database
+                        getHelper().getNoteDao().update(note);
+
+                        adapter.add(note);
+                        adapter.notifyDataSetChanged();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+
+                        Log.v("TAG", "ERROR ON UPDATE QUERY: " + e.toString());
+                    }
+                } else if (requestCode == Activity.RESULT_CANCELED) {
+                    tvNoteTitle.getText();
+                    tvNoteContent.getText();
+                }
+
+                break;
         }
+
     }
 
     // Inflate Menu icons
@@ -173,7 +204,7 @@ public class MainActivity extends AppCompatActivity{
 
     public void btnAddNote(View view) {
         Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-        startActivityForResult(intent,REQUEST_CODE);
+        startActivityForResult(intent,REQUEST_SAVE_ACTIVITY);
     }
 
     private DataBaseHelper getHelper() {

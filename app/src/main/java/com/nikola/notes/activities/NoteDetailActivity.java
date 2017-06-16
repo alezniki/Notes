@@ -1,9 +1,12 @@
 package com.nikola.notes.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -30,12 +33,8 @@ public class NoteDetailActivity extends AppCompatActivity {
     private TextView tvDetailNoteContent;
     private Dao<Note,Integer> noteDao;
 
-
     private Toolbar toolbar;
     private Note note = null;
-
-
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,11 +83,37 @@ public class NoteDetailActivity extends AppCompatActivity {
     }
 
     private void deleteNote() {
-        Toast.makeText(this, "Note Deleted", Toast.LENGTH_SHORT).show();
+        if (note != null) {
+            try {
+                getHelper().getNoteDao().delete(note);
+//                studentDao.delete(studentList.get(selectedRecordPosition));
+                Toast.makeText(this, "Note Deleted", Toast.LENGTH_SHORT).show();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                Log.v("TAG", "ERROR ON DELETE QUERY: " + e.toString());
+            }
+        }
+        onBackPressed();
     }
 
     private void updateNote() {
         Toast.makeText(this, "Note Updated", Toast.LENGTH_SHORT).show();
+
+        String title = String.valueOf(tvDetailNoteTitle.getText());
+        String content = String.valueOf(tvDetailNoteContent.getText());
+
+        if (title.trim().isEmpty() && content.trim().isEmpty()){
+            Intent updateIntent = new Intent();
+            setResult(Activity.RESULT_CANCELED, updateIntent);
+            finish();
+        } else {
+            Intent updateIntent = new Intent();
+            updateIntent.putExtra("title_updated",title);
+            updateIntent.putExtra("content_updated",content);
+            setResult(Activity.RESULT_OK, updateIntent);
+            finish();
+        }
+
     }
 
     private DataBaseHelper getHelper() {
