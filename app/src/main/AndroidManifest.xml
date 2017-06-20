@@ -40,6 +40,10 @@
             android:name=".activities.NoteDetailActivity"
             android:label="@string/app_name">
         </activity>
+
+        <!-- Declare Settings Activity-->
+        <activity
+            android:name=".activities.SettingsActivity"></activity>
     </application>
 
 </manifest>

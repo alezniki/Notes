@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nikola.notes.R;
-import com.nikola.notes.model.Note;
+import com.nikola.notes.db.model.Note;
 
 import java.util.List;
 

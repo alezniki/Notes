@@ -1,4 +1,4 @@
-package com.nikola.notes.model;
+package com.nikola.notes.db.model;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

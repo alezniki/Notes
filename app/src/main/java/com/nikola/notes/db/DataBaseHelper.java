@@ -8,7 +8,7 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.nikola.notes.model.Note;
+import com.nikola.notes.db.model.Note;
 
 import java.sql.SQLException;
 
@@ -22,7 +22,7 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME = "notesDB";
     private static final int DATABASE_VERSION = 1;
 
-    private Dao<Note, Integer> noteDao = null;
+    private Dao<Note, Integer> noteDAO = null;
 
     public DataBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -54,18 +54,19 @@ public class DataBaseHelper extends OrmLiteSqliteOpenHelper {
 
     // Insert, delete, read, update everything will be happened through DAOs
     public Dao<Note, Integer> getNoteDao() throws SQLException {
-        if (noteDao == null){
-            noteDao = getDao(Note.class);
+        if (noteDAO == null){
+            noteDAO = getDao(Note.class);
         }
 
-        return noteDao;
+        return noteDAO;
     }
 
     // Clear resources and close database
     @Override
     public void close() {
-        noteDao = null;
-
         super.close();
+
+        noteDAO = null;
+
     }
 }

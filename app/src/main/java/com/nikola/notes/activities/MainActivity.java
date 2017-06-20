@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -17,12 +19,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.nikola.notes.R;
 import com.nikola.notes.adapters.NoteAdapter;
 import com.nikola.notes.db.DataBaseHelper;
-import com.nikola.notes.model.Note;
+import com.nikola.notes.db.model.Note;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -35,11 +38,14 @@ public class MainActivity extends AppCompatActivity{
     public final int REQUEST_NOTE_DETAIL_ACTIVITY = 2;
 
     private DataBaseHelper dataBaseHelper = null;
+    private SharedPreferences preferences;
 
     private Toolbar toolbar;
     private FloatingActionButton btnAdd;
     private TextView tvNoteTitle;
     private TextView tvNoteContent;
+
+    Note note;
 
 
     private NoteAdapter adapter;
@@ -92,6 +98,8 @@ public class MainActivity extends AppCompatActivity{
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
         handleIntent(getIntent());
 
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -121,7 +129,7 @@ public class MainActivity extends AppCompatActivity{
                     String title = data.getStringExtra("note_title");
                     String content = data.getStringExtra("note_content");
 
-                    Note note = new Note(title,content);
+                    note = new Note(title,content);
 
                     try {
                         // Create note into database
@@ -129,6 +137,9 @@ public class MainActivity extends AppCompatActivity{
 
                         adapter.add(note);
                         adapter.notifyDataSetChanged();
+
+                        boolean toast = preferences.getBoolean("allow_toast",false);
+                        if (toast) Toast.makeText(this, "Note Added Successfully", Toast.LENGTH_SHORT).show();
                     } catch (SQLException e) {
                         e.printStackTrace();
                         Log.v("TAG", "ERROR ON CREATE QUERY: " + e.toString());
@@ -141,17 +152,20 @@ public class MainActivity extends AppCompatActivity{
                 }
 
                 break;
+//            Tool
 
             case REQUEST_NOTE_DETAIL_ACTIVITY:
                 if (resultCode == Activity.RESULT_OK) {
                     String titleUpdated = data.getStringExtra("title_updated");
                     String contentUpdated = data.getStringExtra("content_updated");
 
-                    Note note = new Note(titleUpdated,contentUpdated);
+                    note = new Note(titleUpdated,contentUpdated);
 
                     try {
                         // Update note into database
                         getHelper().getNoteDao().update(note);
+                        boolean toast = preferences.getBoolean("allow_toast",false);
+                        if (toast) Toast.makeText(this, "Note Updated Successfully", Toast.LENGTH_SHORT).show();
 
                         adapter.add(note);
                         adapter.notifyDataSetChanged();
@@ -197,6 +211,8 @@ public class MainActivity extends AppCompatActivity{
         switch (item.getItemId()){
             case R.id.search:
                 return true;
+            case R.id.settings:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -223,5 +239,6 @@ public class MainActivity extends AppCompatActivity{
             dataBaseHelper = null;
         }
     }
+
 
 }
