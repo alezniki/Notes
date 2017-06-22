@@ -88,9 +88,12 @@ public class MainActivity extends AppCompatActivity{
                 if (position > -1) {
 //                    Toast.makeText(MainActivity.this,"Positon: " + list.get(position).getId(), Toast.LENGTH_SHORT).show();
 
+                    Note n = (Note) listView.getItemAtPosition(position);
                     Intent intent = new Intent(MainActivity.this, NoteDetailActivity.class);
-                    intent.putExtra("details", list.get(position).getId());
-                    startActivityForResult(intent,REQUEST_NOTE_DETAIL_ACTIVITY);
+//                    intent.putExtra("details", list.get(position).getId());
+                    intent.putExtra("details", n.getId());
+//                    startActivityForResult(intent,REQUEST_NOTE_DETAIL_ACTIVITY);
+                    startActivity(intent);
                 }
             }
         });
@@ -152,34 +155,33 @@ public class MainActivity extends AppCompatActivity{
                 }
 
                 break;
-//            Tool
 
-            case REQUEST_NOTE_DETAIL_ACTIVITY:
-                if (resultCode == Activity.RESULT_OK) {
-                    String titleUpdated = data.getStringExtra("title_updated");
-                    String contentUpdated = data.getStringExtra("content_updated");
-
-                    note = new Note(titleUpdated,contentUpdated);
-
-                    try {
-                        // Update note into database
-                        getHelper().getNoteDao().update(note);
-                        boolean toast = preferences.getBoolean("allow_toast",false);
-                        if (toast) Toast.makeText(this, "Note Updated Successfully", Toast.LENGTH_SHORT).show();
-
-                        adapter.add(note);
-                        adapter.notifyDataSetChanged();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-
-                        Log.v("TAG", "ERROR ON UPDATE QUERY: " + e.toString());
-                    }
-                } else if (requestCode == Activity.RESULT_CANCELED) {
-                    tvNoteTitle.getText();
-                    tvNoteContent.getText();
-                }
-
-                break;
+//            case REQUEST_NOTE_DETAIL_ACTIVITY:
+//                if (resultCode == Activity.RESULT_OK) {
+//                    String titleUpdated = data.getStringExtra("title_updated");
+//                    String contentUpdated = data.getStringExtra("content_updated");
+//
+//                    note = new Note(titleUpdated,contentUpdated);
+//
+//                    try {
+//                        // Update note into database
+//                        getHelper().getNoteDao().update(note);
+//                        boolean toast = preferences.getBoolean("allow_toast",false);
+//                        if (toast) Toast.makeText(this, "Note Updated Successfully", Toast.LENGTH_SHORT).show();
+//
+//                        adapter.add(note);
+//                        adapter.notifyDataSetChanged();
+//                    } catch (SQLException e) {
+//                        e.printStackTrace();
+//
+//                        Log.v("TAG", "ERROR ON UPDATE QUERY: " + e.toString());
+//                    }
+//                } else if (requestCode == Activity.RESULT_CANCELED) {
+//                    tvNoteTitle.getText();
+//                    tvNoteContent.getText();
+//                }
+//
+//                break;
         }
 
     }
@@ -240,5 +242,44 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        ListView listView = (ListView) findViewById(R.id.list_view);
+//
+//        if (listView != null) {
+//            ArrayAdapter<Note> adapter = (ArrayAdapter<Note>) listView.getAdapter();
+//
+//            if (adapter != null) {
+//                try {
+//                    adapter.clear();
+//                    List<Note> notes = getHelper().getNoteDao().queryForAll();
+//
+//                    adapter.addAll(notes);
+//                    adapter.notifyDataSetChanged();
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (listView != null && adapter != null) {
+            adapter.clear();
+
+            try {
+                list = getHelper().getNoteDao().queryForAll();
+                adapter.addAll(list);
+                adapter.notifyDataSetChanged();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 }

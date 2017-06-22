@@ -1,7 +1,5 @@
 package com.nikola.notes.activities;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -47,16 +45,18 @@ public class NoteDetailActivity extends AppCompatActivity {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        etDetailNoteTitle = (EditText) findViewById(R.id.et_detail_note_title);
-        etDetailNoteContent = (EditText) findViewById(R.id.et_detail_note_content);
 
         //Receive the NoteDetails object which has sent through Intent from MainActivity
         int keyID = getIntent().getExtras().getInt("details");
 
         try {
+            etDetailNoteTitle = (EditText) findViewById(R.id.et_detail_note_title);
+            etDetailNoteContent = (EditText) findViewById(R.id.et_detail_note_content);
+
             note = getHelper().getNoteDao().queryForId(keyID);
-            etDetailNoteTitle.setText(note.getTitle().toString());
-            etDetailNoteContent.setText(note.getContent().toString());
+
+            etDetailNoteTitle.setText(note.getTitle());
+            etDetailNoteContent.setText(note.getContent());
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,7 +91,6 @@ public class NoteDetailActivity extends AppCompatActivity {
         if (note != null) {
             try {
                 getHelper().getNoteDao().delete(note);
-//                studentDao.delete(studentList.get(selectedRecordPosition));
                 boolean toast = preferences.getBoolean("allow_toast",false);
                 if (toast) Toast.makeText(this, "Note Deleted Successfully", Toast.LENGTH_SHORT).show();
             } catch (SQLException e) {
@@ -105,19 +104,29 @@ public class NoteDetailActivity extends AppCompatActivity {
     private void updateNote() {
 //        Toast.makeText(this, "Note Updated", Toast.LENGTH_SHORT).show();
 
-        String title = String.valueOf(etDetailNoteTitle.getText());
-        String content = String.valueOf(etDetailNoteContent.getText());
+//        String title = String.valueOf(etDetailNoteTitle.getText());
+//        String content = String.valueOf(etDetailNoteContent.getText());
 
-        if (title.trim().isEmpty() && content.trim().isEmpty()){
-            Intent updateIntent = new Intent();
-            setResult(Activity.RESULT_CANCELED, updateIntent);
+        note.setTitle(etDetailNoteTitle.getText().toString());
+        note.setContent(etDetailNoteContent.getText().toString());
+
+//        if (title.trim().isEmpty() && content.trim().isEmpty()){
+//            Intent updateIntent = new Intent();
+//            setResult(Activity.RESULT_CANCELED, updateIntent);
+//            finish();
+//        } else {
+//            Intent updateIntent = new Intent();
+//            updateIntent.putExtra("title_updated",title);
+//            updateIntent.putExtra("content_updated",content);
+//            setResult(Activity.RESULT_OK, updateIntent);
+//            finish();
+//        }
+
+        try {
+            getHelper().getNoteDao().update(note);
             finish();
-        } else {
-            Intent updateIntent = new Intent();
-            updateIntent.putExtra("title_updated",title);
-            updateIntent.putExtra("content_updated",content);
-            setResult(Activity.RESULT_OK, updateIntent);
-            finish();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
     }
@@ -138,5 +147,4 @@ public class NoteDetailActivity extends AppCompatActivity {
             dataBaseHelper = null;
         }
     }
-
 }
