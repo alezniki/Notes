@@ -31,7 +31,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity /*implements SearchView.OnQueryTextListener*/ {
 //    private Context context;
 
     public final int REQUEST_SAVE_ACTIVITY = 1;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity{
     private SharedPreferences preferences;
 
     private Toolbar toolbar;
-    private FloatingActionButton btnAdd;
+    private FloatingActionButton fabAdd;
     private TextView tvNoteTitle;
     private TextView tvNoteContent;
 
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity{
 
         tvNoteTitle = (TextView)findViewById(R.id.tv_note_title);
         tvNoteContent = (TextView)findViewById(R.id.tv_note_content);
-        btnAdd = (FloatingActionButton) findViewById(R.id.btn_add_note);
+        fabAdd = (FloatingActionButton) findViewById(R.id.btn_add_note);
 
 
         // Construct the data source
@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity{
         try {
             list = getHelper().getNoteDao().queryForAll();
             adapter.addAll(list); // Note Collection
+            adapter.notifyDataSetChanged();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -99,26 +100,33 @@ public class MainActivity extends AppCompatActivity{
         });
 
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
-        handleIntent(getIntent());
+//        handleIntent(getIntent());
 
 
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                startActivityForResult(intent,REQUEST_SAVE_ACTIVITY);
+            }
+        });
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            //use the query to search your data somehow
-
-            finish();
-        }
-    }
+//    @Override
+//    protected void onNewIntent(Intent intent) {
+//        handleIntent(intent);
+//    }
+//
+//    private void handleIntent(Intent intent) {
+//
+//        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+//            String query = intent.getStringExtra(SearchManager.QUERY);
+//            //use the query to search your data somehow
+//
+//            finish();
+//        }
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -203,6 +211,13 @@ public class MainActivity extends AppCompatActivity{
         searchView.setBackgroundColor(Color.TRANSPARENT);
 //        setStatusBarColor(this, Color.parseColor("#4CAF50"));
 
+
+        searchView.setSubmitButtonEnabled(false);
+        //searchView.setOnQueryTextListener(this);
+
+//        if (searchView.isShown()) {
+//            searchView.onActionViewCollapsed();
+//        }
         return true;
     }
 
@@ -211,8 +226,8 @@ public class MainActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here.
         switch (item.getItemId()){
-            case R.id.search:
-                return true;
+//            case R.id.search:
+//                return true;
             case R.id.settings:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             default:
@@ -220,10 +235,10 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    public void btnAddNote(View view) {
-        Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-        startActivityForResult(intent,REQUEST_SAVE_ACTIVITY);
-    }
+//    public void btnAddNote(View view) {
+//        Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+//        startActivityForResult(intent,REQUEST_SAVE_ACTIVITY);
+//    }
 
     private DataBaseHelper getHelper() {
         if (dataBaseHelper == null) {
@@ -274,12 +289,32 @@ public class MainActivity extends AppCompatActivity{
 
             try {
                 list = getHelper().getNoteDao().queryForAll();
-                adapter.addAll(list);
-                adapter.notifyDataSetChanged();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
+
+            adapter.addAll(list);
+            adapter.notifyDataSetChanged();
+
         }
     }
+
+//    This interface listen to text change events in SearchView
+
+//    @Override
+//    public boolean onQueryTextSubmit(String query) {
+//        // Triggered when the search is pressed
+//        return false;
+//    }
+
+//    @Override
+//    public boolean onQueryTextChange(String newText) {
+//        // Called when the user types each character in the text field
+//        adapter.getFilter().filter(newText);
+//
+//        return true;
+//    }
+
+
 }
