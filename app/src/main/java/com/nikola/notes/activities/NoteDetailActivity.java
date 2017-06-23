@@ -124,6 +124,8 @@ public class NoteDetailActivity extends AppCompatActivity {
 
         try {
             getHelper().getNoteDao().update(note);
+            boolean toast = preferences.getBoolean("allow_toast",false);
+            if (toast) Toast.makeText(this, "Note Updated Successfully", Toast.LENGTH_SHORT).show();
             finish();
         } catch (SQLException e) {
             e.printStackTrace();
