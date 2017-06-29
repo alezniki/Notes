@@ -31,11 +31,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity /*implements SearchView.OnQueryTextListener*/ {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 //    private Context context;
 
     public final int REQUEST_SAVE_ACTIVITY = 1;
-    public final int REQUEST_NOTE_DETAIL_ACTIVITY = 2;
+    //public final int REQUEST_NOTE_DETAIL_ACTIVITY = 2;
 
     private DataBaseHelper dataBaseHelper = null;
     private SharedPreferences preferences;
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity /*implements SearchView.OnQu
         });
 
         // Handle the ACTION_SEARCH intent by checking for it in your onCreate() method.
-//        handleIntent(getIntent());
+        handleIntent(getIntent());
 
 
         fabAdd.setOnClickListener(new View.OnClickListener() {
@@ -113,20 +113,34 @@ public class MainActivity extends AppCompatActivity /*implements SearchView.OnQu
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
-//    @Override
-//    protected void onNewIntent(Intent intent) {
-//        handleIntent(intent);
-//    }
-//
-//    private void handleIntent(Intent intent) {
-//
-//        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-//            String query = intent.getStringExtra(SearchManager.QUERY);
-//            //use the query to search your data somehow
-//
-//            finish();
-//        }
-//    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+
+        if (listView != null && adapter != null) {
+            adapter.clear();
+
+            try {
+                list = getHelper().getNoteDao().queryForAll();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            adapter.addAll(list);
+            adapter.notifyDataSetChanged();
+
+        }
+    }
+
+    private void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            //use the query to search your data somehow
+
+            finish();
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -213,7 +227,7 @@ public class MainActivity extends AppCompatActivity /*implements SearchView.OnQu
 
 
         searchView.setSubmitButtonEnabled(false);
-        //searchView.setOnQueryTextListener(this);
+        searchView.setOnQueryTextListener(this);
 
 //        if (searchView.isShown()) {
 //            searchView.onActionViewCollapsed();
@@ -297,24 +311,25 @@ public class MainActivity extends AppCompatActivity /*implements SearchView.OnQu
             adapter.addAll(list);
             adapter.notifyDataSetChanged();
 
+            handleIntent(getIntent());
+
         }
     }
 
 //    This interface listen to text change events in SearchView
 
-//    @Override
-//    public boolean onQueryTextSubmit(String query) {
-//        // Triggered when the search is pressed
-//        return false;
-//    }
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        // Triggered when the search is pressed
+        return false;
+    }
 
-//    @Override
-//    public boolean onQueryTextChange(String newText) {
-//        // Called when the user types each character in the text field
-//        adapter.getFilter().filter(newText);
-//
-//        return true;
-//    }
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        // Called when the user types each character in the text field
+        adapter.getFilter().filter(newText);
 
-
+        return true;
+    }
+    
 }
